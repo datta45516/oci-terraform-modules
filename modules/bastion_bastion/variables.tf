@@ -1,19 +1,24 @@
-terraform {
-  required_version = ">= 1.5.0"
-  required_providers { oci = { source = "oracle/oci", version = ">= 5.0.0" } }
+variable "compartment_id"   { type = string, description = "Compartment OCID." }
+variable "target_subnet_id" { type = string, description = "Target subnet OCID." }
+
+variable "name" { type = string, description = "Bastion name." }
+
+variable "bastion_type" {
+  type        = string
+  description = "Bastion type."
+  default     = "STANDARD"
 }
 
-resource "oci_bastion_bastion" "this" {
-  compartment_id                 = var.compartment_id
-  bastion_type                   = var.bastion_type
-  target_subnet_id               = var.target_subnet_id
-  name                           = var.name
-  client_cidr_block_allow_list   = var.client_cidr_block_allow_list
-  max_session_ttl_in_seconds     = var.max_session_ttl_in_seconds
-
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+variable "client_cidr_block_allow_list" {
+  type        = list(string)
+  description = "Allowed client CIDRs."
 }
 
-output "id" { value = oci_bastion_bastion.this.id }
-output "state" { value = oci_bastion_bastion.this.state }
+variable "max_session_ttl_in_seconds" {
+  type        = number
+  description = "Max session TTL seconds."
+  default     = 10800
+}
+
+variable "defined_tags"  { type = map(map(string)), default = {}, description = "Defined tags." }
+variable "freeform_tags" { type = map(string),      default = {}, description = "Free-form tags." }
